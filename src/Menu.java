@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.w3c.dom.Text;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class Menu {
 
         // Button actions
         searchPlayersButton.setOnAction(e -> playerSearchMenu(primaryStage));
+        searchClubsButton.setOnAction(e -> clubSearchMenu(primaryStage));
         addPlayerButton.setOnAction(e -> addPlayerMenu(primaryStage));
         exitButton.setOnAction(e -> {
             FileOperations.savePlayersToFile(PlayerList.getPlayers());
@@ -341,78 +343,163 @@ public class Menu {
 
 
     /// ////////// /////
-    public static void clubSearchMenu()
+    public static void clubSearchMenu(Stage primaryStage)
     {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Player> searchResult = new ArrayList<>();
+//        Scanner scanner = new Scanner(System.in);
+//        ArrayList<Player> searchResult = new ArrayList<>();
+//
+//
+//        int choice = -1;
+//        while(choice != 5)
+//        {
+//            System.out.println( "Club Searching Options:\n(1) Player(s) with the maximum salary of a club\n(2) Player(s) with the maximum age of a club\n(3) Player(s) with the maximum height of a club\n(4) Total yearly salary of a club\n(5) Back to Main Menu");
+//            choice = scanner.nextInt();
+//            scanner.nextLine();
+//
+//            String clubName;
+//
+//            switch(choice)
+//            {
+//                case 1:
+//                    System.out.println("Enter name of the club: ");
+//                    clubName = scanner.nextLine();
+//                    searchResult = SearchClub.byMaxSalary(clubName);
+//                    if(searchResult.isEmpty())
+//                        System.out.println("No club of such name exists.");
+//                    else
+//                        PlayerList.printPlayers(searchResult);
+//
+//                    break;
+//
+//                case 2:
+//                    System.out.println("Enter name of the club: ");
+//                    clubName = scanner.nextLine();
+//                    searchResult = SearchClub.byMaxAge(clubName);
+//                    if(searchResult.isEmpty())
+//                        System.out.println("No club of such name exists.");
+//                    else
+//                        PlayerList.printPlayers(searchResult);
+//
+//                    break;
+//
+//                case 3:
+//                    System.out.println("Enter name of the club: ");
+//                    clubName = scanner.nextLine();
+//                    searchResult = SearchClub.byMaxHeight(clubName);
+//                    if(searchResult.isEmpty())
+//                        System.out.println("No club of such name exists.");
+//                    else
+//                        PlayerList.printPlayers(searchResult);
+//
+//                    break;
+//
+//                case 4:
+//                    System.out.println("Enter name of the club: ");
+//                    clubName = scanner.nextLine();
+//                    long total = SearchClub.totalClubSalary(clubName);
+//                    if(total == -1)
+//                        System.out.println("No club of such name exists.");
+//                    else
+//                        System.out.println("Total yearly salary of the club is "+total);
+//                    break;
+//
+//                case 5:
+//                    break;
+//
+//                default:
+//                    System.out.println("Invalid option");
+//                    break;
+//
+//            }
+//
+//
+//
+//        }
+
+       VBox layout = new VBox(20);
+       layout.setPadding(new Insets(20));
+       layout.setAlignment(Pos.CENTER);
+       layout.getStyleClass().add("vbox-menu");
 
 
-        int choice = -1;
-        while(choice != 5)
-        {
-            System.out.println( "Club Searching Options:\n(1) Player(s) with the maximum salary of a club\n(2) Player(s) with the maximum age of a club\n(3) Player(s) with the maximum height of a club\n(4) Total yearly salary of a club\n(5) Back to Main Menu");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+       Button byMaxSalaryButton = new Button("By Max Salary");
+       Button byMaxAgeButton = new Button("By Max Age");
+       Button byMaxHeightButton = new Button("By Max Height");
+       Button totalYearlySalaryButton = new Button("Total Salary (Yearly)");
+       Button backButton = new Button("Back");
 
-            String clubName;
-
-            switch(choice)
-            {
-                case 1:
-                    System.out.println("Enter name of the club: ");
-                    clubName = scanner.nextLine();
-                    searchResult = SearchClub.byMaxSalary(clubName);
-                    if(searchResult.isEmpty())
-                        System.out.println("No club of such name exists.");
-                    else
-                        PlayerList.printPlayers(searchResult);
-
-                    break;
-
-                case 2:
-                    System.out.println("Enter name of the club: ");
-                    clubName = scanner.nextLine();
-                    searchResult = SearchClub.byMaxAge(clubName);
-                    if(searchResult.isEmpty())
-                        System.out.println("No club of such name exists.");
-                    else
-                        PlayerList.printPlayers(searchResult);
-
-                    break;
-
-                case 3:
-                    System.out.println("Enter name of the club: ");
-                    clubName = scanner.nextLine();
-                    searchResult = SearchClub.byMaxHeight(clubName);
-                    if(searchResult.isEmpty())
-                        System.out.println("No club of such name exists.");
-                    else
-                        PlayerList.printPlayers(searchResult);
-
-                    break;
-
-                case 4:
-                    System.out.println("Enter name of the club: ");
-                    clubName = scanner.nextLine();
-                    long total = SearchClub.totalClubSalary(clubName);
-                    if(total == -1)
-                        System.out.println("No club of such name exists.");
-                    else
-                        System.out.println("Total yearly salary of the club is "+total);
-                    break;
-
-                case 5:
-                    break;
-
-                default:
-                    System.out.println("Invalid option");
-                    break;
-
-            }
+       byMaxSalaryButton.getStyleClass().add("button");
+       byMaxAgeButton.getStyleClass().add("button");
+       byMaxHeightButton.getStyleClass().add("button");
+       totalYearlySalaryButton.getStyleClass().add("button");
+       backButton.getStyleClass().add("button");
 
 
 
+        Label prompt = new Label("Enter name of the club: ");
+        TextField textField = new TextField();
+        TableView<Player> tableView = TableViewHelper.createPlayerTableView(new ArrayList<>()); // initially empty
+
+        prompt.getStyleClass().add("label");
+
+        TextArea totalSalary = new TextArea();
+        totalSalary.setEditable(false);
+
+
+        byMaxSalaryButton.setOnAction(e -> {
+           totalSalary.setText("");   // clear total salary screen from before
+        String club = textField.getText().trim();
+        ArrayList<Player> searchResult = SearchClub.byMaxSalary(club);
+        if(searchResult.isEmpty()){
+            tableView.setItems(FXCollections.observableArrayList());
         }
+        else{
+            tableView.setItems(FXCollections.observableArrayList(searchResult));
+        }
+
+       });
+
+       byMaxAgeButton.setOnAction(e -> {
+           totalSalary.setText("");
+           String club = textField.getText().trim();
+           ArrayList<Player> searchResult = SearchClub.byMaxAge(club);
+           if(searchResult.isEmpty()){
+               tableView.setItems(FXCollections.observableArrayList());
+           }
+           else{
+               tableView.setItems(FXCollections.observableArrayList(searchResult));
+           }
+       });
+
+       byMaxHeightButton.setOnAction(e -> {
+           totalSalary.setText("");
+           String club = textField.getText().trim();
+           ArrayList<Player> searchResult = SearchClub.byMaxHeight(club);
+           if(searchResult.isEmpty()){
+               tableView.setItems(FXCollections.observableArrayList());
+           }
+           else{
+               tableView.setItems(FXCollections.observableArrayList(searchResult));
+           }
+       });
+
+       totalYearlySalaryButton.setOnAction(e -> {
+           tableView.setItems(FXCollections.observableArrayList());    // clear table from before
+        String club = textField.getText().trim();
+        long total = SearchClub.totalClubSalary(club);
+        totalSalary.setText("Total Salary of the club is "+total);
+
+       });
+
+       backButton.setOnAction(e -> mainMenu(primaryStage));
+
+       layout.getChildren().addAll(byMaxSalaryButton,byMaxAgeButton,byMaxHeightButton,totalYearlySalaryButton,prompt,textField,tableView,totalSalary,backButton);
+
+       Scene scene = new Scene(layout,1000,700);
+       scene.getStylesheets().add("styles.css");
+       primaryStage.setTitle("Club Search Menu");
+       primaryStage.setScene(scene);
+       primaryStage.show();
 
     }
 
