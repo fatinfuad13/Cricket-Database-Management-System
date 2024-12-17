@@ -37,6 +37,7 @@
 .text-field {
 
 
+
 }
 
 .text-area {
@@ -51,4 +52,36 @@
      -fx-text-alignment: center;
 
 
+}
+
+.input-field {
+    -fx-font-size: 14px;
+    -fx-padding: 8px;
+    -fx-border-color: #bdc3c7; /* Light gray border */
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-background-color: #ecf0f1; /* Very light gray */
+}
+
+/* Login Button */
+.login-button {
+    -fx-background-color: #3498db; /* Blue */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+
+}
+
+.login-button:hover {
+    -fx-background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Message Label Styling */
+.message-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }

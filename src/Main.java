@@ -16,7 +16,8 @@ public class Main extends Application {
         ArrayList<Player> players = FileOperations.loadPlayersFromFile(); // load players from input file
         PlayerList.setPlayers(players); // load players into database from file
        // System.out.println(players);
-        Menu.mainMenu(primaryStage); // display main menu
+       // Menu.mainMenu(primaryStage); // display main menu
+        Menu.loginMenu(primaryStage);
         System.out.println(PlayerList.getPlayers());
         // FileOperations.savePlayersToFile(players); // save changes back into file before exiting
         primaryStage.setOnCloseRequest(event -> {

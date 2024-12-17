@@ -7,6 +7,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +23,85 @@ public class Menu {
 
 
     //ArrayList<Player> players = PlayerList.getPlayers(); // we assign here instead of making a copy
+    public static void loginMenu(Stage primaryStage)
+    {
+
+        VBox layout = new VBox(15);
+        layout.setAlignment(javafx.geometry.Pos.CENTER);
+        layout.getStyleClass().add("vbox-menu"); // CSS class for overall VBox
+
+        // Title
+        Label titleLabel = new Label("Login");
+        titleLabel.getStyleClass().add("title-label"); // CSS class for title
+
+        // Username field
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        usernameField.setPrefWidth(10); // Set preferred width
+        usernameField.getStyleClass().add("input-field"); // CSS class for input field
+
+        // Password field
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        passwordField.setPrefWidth(10); // Set preferred width
+        passwordField.getStyleClass().add("input-field"); // CSS class for input field
+
+        // Login button
+        Button loginButton = new Button("Login");
+        loginButton.getStyleClass().add("login-button"); // CSS class for button
+
+        // Message label
+        Label messageLabel = new Label();
+        messageLabel.getStyleClass().add("message-label"); // CSS class for messages
+
+        // Button action
+        loginButton.setOnAction(e -> {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+            boolean success = sendLoginRequest(username, password);
+
+            if (success) {
+                messageLabel.setText("Login Successful!");
+                messageLabel.setStyle("-fx-text-fill: green;");
+                mainMenu(primaryStage);
+            } else {
+                messageLabel.setText("Invalid Login!");
+                messageLabel.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        // Adding components to layout
+        layout.getChildren().addAll(titleLabel, usernameField, passwordField, loginButton, messageLabel);
+
+        // Set up the scene
+        Scene scene = new Scene(layout, 1000, 700);
+        scene.getStylesheets().add("styles.css"); // Link to CSS file
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Client Login");
+        primaryStage.show();
+    }
+
+
+
+    private static boolean sendLoginRequest(String username, String password) {
+        try (Socket socket = new Socket("192.168.56.1", 1234);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            // Send request to server
+            out.println("LOGIN " + username + " " + password);
+            String response = in.readLine();
+
+            return response.equals("SUCCESS");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
 
 
     public static void mainMenu(Stage primaryStage)
@@ -345,76 +429,7 @@ public class Menu {
     /// ////////// /////
     public static void clubSearchMenu(Stage primaryStage)
     {
-//        Scanner scanner = new Scanner(System.in);
-//        ArrayList<Player> searchResult = new ArrayList<>();
-//
-//
-//        int choice = -1;
-//        while(choice != 5)
-//        {
-//            System.out.println( "Club Searching Options:\n(1) Player(s) with the maximum salary of a club\n(2) Player(s) with the maximum age of a club\n(3) Player(s) with the maximum height of a club\n(4) Total yearly salary of a club\n(5) Back to Main Menu");
-//            choice = scanner.nextInt();
-//            scanner.nextLine();
-//
-//            String clubName;
-//
-//            switch(choice)
-//            {
-//                case 1:
-//                    System.out.println("Enter name of the club: ");
-//                    clubName = scanner.nextLine();
-//                    searchResult = SearchClub.byMaxSalary(clubName);
-//                    if(searchResult.isEmpty())
-//                        System.out.println("No club of such name exists.");
-//                    else
-//                        PlayerList.printPlayers(searchResult);
-//
-//                    break;
-//
-//                case 2:
-//                    System.out.println("Enter name of the club: ");
-//                    clubName = scanner.nextLine();
-//                    searchResult = SearchClub.byMaxAge(clubName);
-//                    if(searchResult.isEmpty())
-//                        System.out.println("No club of such name exists.");
-//                    else
-//                        PlayerList.printPlayers(searchResult);
-//
-//                    break;
-//
-//                case 3:
-//                    System.out.println("Enter name of the club: ");
-//                    clubName = scanner.nextLine();
-//                    searchResult = SearchClub.byMaxHeight(clubName);
-//                    if(searchResult.isEmpty())
-//                        System.out.println("No club of such name exists.");
-//                    else
-//                        PlayerList.printPlayers(searchResult);
-//
-//                    break;
-//
-//                case 4:
-//                    System.out.println("Enter name of the club: ");
-//                    clubName = scanner.nextLine();
-//                    long total = SearchClub.totalClubSalary(clubName);
-//                    if(total == -1)
-//                        System.out.println("No club of such name exists.");
-//                    else
-//                        System.out.println("Total yearly salary of the club is "+total);
-//                    break;
-//
-//                case 5:
-//                    break;
-//
-//                default:
-//                    System.out.println("Invalid option");
-//                    break;
-//
-//            }
-//
-//
-//
-//        }
+
 
        VBox layout = new VBox(20);
        layout.setPadding(new Insets(20));
