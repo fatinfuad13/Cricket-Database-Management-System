@@ -23,6 +23,7 @@ public class Menu {
 
 
     //ArrayList<Player> players = PlayerList.getPlayers(); // we assign here instead of making a copy
+    private static String userName = null;
     public static void loginMenu(Stage primaryStage)
     {
 
@@ -58,12 +59,45 @@ public class Menu {
         loginButton.setOnAction(e -> {
             String username = usernameField.getText().trim();
             String password = passwordField.getText().trim();
+            System.out.println(username);
+            System.out.println(password);;
+
             boolean success = sendLoginRequest(username, password);
 
             if (success) {
                 messageLabel.setText("Login Successful!");
                 messageLabel.setStyle("-fx-text-fill: green;");
-                mainMenu(primaryStage);
+                if (username.equals("KolkataKnightRiders"))
+                    userName = "Kolkata Knight Riders";
+                else if (username.equals("RajasthanRoyals"))
+                    userName = "Rajasthan Royals";
+                else if (username.equals("RoyalChallengersBangalore"))
+                    userName = "Royal Challengers Bangalore";
+                else if (username.equals("MumbaiIndians"))
+                    userName = "Mumbai Indians";
+                else if (username.equals("ChennaiSuperKings"))
+                    userName = "Chennai Super Kings";
+                else if (username.equals("DelhiCapitals"))
+                    userName = "Delhi Capitals";
+                else if (username.equals("LucknowSuperGiants"))
+                    userName = "Lucknow Super Giants";
+                else if (username.equals("GujaratTitans"))
+                    userName = "Gujarat Titans";
+                else if (username.equals("PunjabKings"))
+                    userName = "Punjab Kings";
+                else if (username.equals("SunrisersHyderabad"))
+                    userName = "Sunrisers Hyderabad";
+                else
+                    userName = null; // Optional: Handle unknown usernames
+
+
+
+
+
+
+
+
+                mainMenu(primaryStage); // here
             } else {
                 messageLabel.setText("Invalid Login!");
                 messageLabel.setStyle("-fx-text-fill: red;");
@@ -104,7 +138,7 @@ public class Menu {
 
 
 
-    public static void mainMenu(Stage primaryStage)
+    public static void mainMenu(Stage primaryStage) // here
     {
 
         VBox layout = new VBox(20); // Spacing between elements
@@ -121,11 +155,18 @@ public class Menu {
         Button addPlayerButton = new Button("Add Player");
         Button exitButton = new Button("Exit");
 
+        Button viewPlayersButton = new Button("View My Players");
+        Button sellPlayerButton = new Button("Sell Player");
+        Button viewMarketButton = new Button("View Transfer Market");
+
         // Add button CSS classes
         searchPlayersButton.getStyleClass().add("button");
         searchClubsButton.getStyleClass().add("button");
         addPlayerButton.getStyleClass().add("button");
         exitButton.getStyleClass().add("button");
+        viewPlayersButton.getStyleClass().add("button");
+        sellPlayerButton.getStyleClass().add("button");
+        viewMarketButton.getStyleClass().add("button");
 
         // Button actions
         searchPlayersButton.setOnAction(e -> playerSearchMenu(primaryStage));
@@ -136,8 +177,13 @@ public class Menu {
             primaryStage.close();
         });
 
+        // Actions
+        viewPlayersButton.setOnAction(e -> viewMyPlayers(primaryStage));
+        sellPlayerButton.setOnAction(e -> sellPlayer(primaryStage));
+        viewMarketButton.setOnAction(e -> viewTransferMarket(primaryStage));
+
         // Add components to layout
-        layout.getChildren().addAll(titleLabel, searchPlayersButton, searchClubsButton, addPlayerButton, exitButton);
+        layout.getChildren().addAll(titleLabel, searchPlayersButton, searchClubsButton, addPlayerButton,viewPlayersButton,sellPlayerButton,viewMarketButton, exitButton);
 
         // Create scene
         Scene scene = new Scene(layout, 1000, 700);
@@ -146,9 +192,75 @@ public class Menu {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+   public static void viewMyPlayers(Stage primaryStage)
+   {
+       try (Socket socket = new Socket("192.168.56.1", 1234);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+           System.out.println("Menu user"+userName);
+           out.println("GET_PLAYERS " + userName);
+          // System.out.println("Entered Menu of viewMyPlayers");
+           String response;
+           ArrayList<Player> playerList = new ArrayList<>();
+           while ((response = in.readLine()) != null) {
+               System.out.println("Received response: " + response);  // Debugging line
+               // Assuming each response contains player data
+               // Parse the response into Player objects
+               String[] details = response.split(",");
+               if (details.length == 8) {
+                   String name = details[0].trim();
+                   String country = details[1].trim();
+                   int age = Integer.parseInt(details[2].trim());
+                   double height = Double.parseDouble(details[3].trim());
+                   String club = details[4].trim();
+                   String position = details[5].trim();
+
+                   int number = 0;
+                   if(details[6].trim().isEmpty())
+                   {
+                       number = 0;
+                   }
+                   else
+                   {
+                       number = Integer.parseInt(details[6].trim());
+                   }
+                   int weeklySalary =  Integer.parseInt(details[7].trim());
 
 
+                   Player player = new Player(name, country, age, height, club, position, number, weeklySalary);
+                   System.out.println("hehehafgd"+player);
+                   playerList.add(player);
+               }
+           }
+           System.out.println(playerList);
+           // Create the TableView using the helper method
+           TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
 
+           // Create a VBox to hold the TableView
+           VBox layout = new VBox(10);
+           layout.getChildren().add(tableView);
+
+           // Create a scene and stage to show the TableView
+           Scene scene = new Scene(layout, 600, 400);  // Set width and height as needed
+           Stage tableStage = new Stage();
+           tableStage.setTitle("My Players");
+           tableStage.setScene(scene);
+           tableStage.show();
+
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+   }
+
+    public static void sellPlayer(Stage primaryStage)
+    {
+
+    }
+
+    public static void viewTransferMarket(Stage primaryStage)
+    {
+
+    }
 
     public static void playerSearchMenu(Stage primaryStage) {
         VBox layout = new VBox(20); // Spacing of 20 between elements

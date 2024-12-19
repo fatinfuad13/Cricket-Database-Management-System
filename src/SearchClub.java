@@ -6,6 +6,7 @@ public class SearchClub {
 
     public static ArrayList<Player> createClub(String clubName) // makes a list where all players are from the club named "clubName"
     {
+        System.out.println(PlayerList.getPlayers());
         ArrayList<Player> players = new ArrayList<>(PlayerList.getPlayers()); // create a copy instead of assigning to avoid changing players array while searching
 
         //ArrayList<Player> searched = new ArrayList<>();

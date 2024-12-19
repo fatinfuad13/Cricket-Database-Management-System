@@ -18,7 +18,7 @@ public class Main extends Application {
        // System.out.println(players);
        // Menu.mainMenu(primaryStage); // display main menu
         Menu.loginMenu(primaryStage);
-        System.out.println(PlayerList.getPlayers());
+        //System.out.println(PlayerList.getPlayers());
         // FileOperations.savePlayersToFile(players); // save changes back into file before exiting
         primaryStage.setOnCloseRequest(event -> {
             FileOperations.savePlayersToFile(players);

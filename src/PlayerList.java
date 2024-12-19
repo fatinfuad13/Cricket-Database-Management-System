@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PlayerList {
-    private static ArrayList<Player> players; // ensures only one copy of players
+    private static ArrayList<Player> players ;//= new ArrayList<>(); // ensures only one copy of players
 
     public static void setPlayers(ArrayList<Player> playerList) // only call once in main
     {

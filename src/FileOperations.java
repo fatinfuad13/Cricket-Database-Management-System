@@ -12,6 +12,7 @@ public class FileOperations {
 
     // Load players from the file and return them as a list
     public static ArrayList<Player> loadPlayersFromFile() {
+
         ArrayList<Player> players = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(INPUT_FILE_NAME))) {
