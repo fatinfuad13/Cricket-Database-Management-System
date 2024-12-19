@@ -23,6 +23,7 @@ public class Menu {
 
 
     //ArrayList<Player> players = PlayerList.getPlayers(); // we assign here instead of making a copy
+    private static String clubName = null;
     private static String userName = null;
     public static void loginMenu(Stage primaryStage)
     {
@@ -67,28 +68,30 @@ public class Menu {
             if (success) {
                 messageLabel.setText("Login Successful!");
                 messageLabel.setStyle("-fx-text-fill: green;");
+                userName = username;
+
                 if (username.equals("KolkataKnightRiders"))
-                    userName = "Kolkata Knight Riders";
+                    clubName = "Kolkata Knight Riders";
                 else if (username.equals("RajasthanRoyals"))
-                    userName = "Rajasthan Royals";
+                    clubName = "Rajasthan Royals";
                 else if (username.equals("RoyalChallengersBangalore"))
-                    userName = "Royal Challengers Bangalore";
+                    clubName = "Royal Challengers Bangalore";
                 else if (username.equals("MumbaiIndians"))
-                    userName = "Mumbai Indians";
+                    clubName = "Mumbai Indians";
                 else if (username.equals("ChennaiSuperKings"))
-                    userName = "Chennai Super Kings";
+                    clubName = "Chennai Super Kings";
                 else if (username.equals("DelhiCapitals"))
-                    userName = "Delhi Capitals";
+                    clubName = "Delhi Capitals";
                 else if (username.equals("LucknowSuperGiants"))
-                    userName = "Lucknow Super Giants";
+                    clubName = "Lucknow Super Giants";
                 else if (username.equals("GujaratTitans"))
-                    userName = "Gujarat Titans";
+                    clubName = "Gujarat Titans";
                 else if (username.equals("PunjabKings"))
-                    userName = "Punjab Kings";
+                    clubName = "Punjab Kings";
                 else if (username.equals("SunrisersHyderabad"))
-                    userName = "Sunrisers Hyderabad";
+                    clubName = "Sunrisers Hyderabad";
                 else
-                    userName = null; // Optional: Handle unknown usernames
+                    clubName = null; // Optional: Handle unknown usernames
 
 
 
@@ -197,8 +200,8 @@ public class Menu {
        try (Socket socket = new Socket("192.168.56.1", 1234);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-           System.out.println("Menu user"+userName);
-           out.println("GET_PLAYERS " + userName);
+           System.out.println("Menu user"+clubName);
+           out.println("GET_PLAYERS " + clubName);
           // System.out.println("Entered Menu of viewMyPlayers");
            String response;
            ArrayList<Player> playerList = new ArrayList<>();
@@ -254,11 +257,55 @@ public class Menu {
 
     public static void sellPlayer(Stage primaryStage)
     {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText("Enter player name to sell:");
+        dialog.showAndWait().ifPresent(playerName -> {
+            try (Socket socket = new Socket("192.168.56.1", 1234);
+                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+                out.println("SELL_PLAYER "+userName+" "+ playerName);
+                String response = in.readLine();
+                // showAlert("Sell Player", response);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 
     public static void viewTransferMarket(Stage primaryStage)
     {
+        try (Socket socket = new Socket("192.168.56.1", 1234);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            out.println("VIEW_TRANSFER_MARKET");
+            String response;
+            StringBuilder market = new StringBuilder();
+
+            // Read the transfer market data from the server
+            while ((response = in.readLine()) != null) {
+                market.append(response).append("\n");
+            }
+
+            // Show the market data in a dialog box
+            Alert marketAlert = new Alert(Alert.AlertType.INFORMATION);
+            marketAlert.setTitle("Transfer Market");
+            marketAlert.setHeaderText("Available Players in Transfer Market");
+            marketAlert.setContentText(market.toString());
+            marketAlert.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Show an error dialog if there is an issue with the connection
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Error");
+            errorAlert.setHeaderText("Unable to connect to the server");
+            errorAlert.setContentText("Please try again later.");
+            errorAlert.showAndWait();
+        }
 
     }
 

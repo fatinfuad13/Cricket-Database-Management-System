@@ -7,10 +7,13 @@ import java.util.List;
 public class Server {
     private static final int PORT = 1234; // Port to listen on
     private static  HashMap<String, String> userCredentials = new HashMap<>();
-    // Map manager id to password
     private static ArrayList<Player> players = FileOperations.loadPlayersFromFile();// load players from input file
     private static HashMap<String, ArrayList<Player>> clubPlayers = new HashMap<>(); // Club to Players
     private static ArrayList<Player> transferMarket = new ArrayList<>();
+    private static HashMap<String, String> usernameToClubName = new HashMap<>();
+    private static final String TRANSFER_MARKET_FILE = "src/TransferMarket.txt";
+
+
 
     static
     {
@@ -25,6 +28,21 @@ public class Server {
         userCredentials.put("GujaratTitans","GT");
         userCredentials.put("PunjabKings","PK");
         userCredentials.put("SunrisersHyderabad","SRH");
+
+        usernameToClubName.put("KolkataKnightRiders", "Kolkata Knight Riders");
+        usernameToClubName.put("RajasthanRoyals", "Rajasthan Royals");
+        usernameToClubName.put("RoyalChallengersBangalore", "Royal Challengers Bangalore");
+        usernameToClubName.put("MumbaiIndians", "Mumbai Indians");
+        usernameToClubName.put("ChennaiSuperKings", "Chennai Super Kings");
+        usernameToClubName.put("DelhiCapitals", "Delhi Capitals");
+        usernameToClubName.put("LucknowSuperGiants", "Lucknow Super Giants");
+        usernameToClubName.put("GujaratTitans", "Gujarat Titans");
+        usernameToClubName.put("PunjabKings", "Punjab Kings");
+        usernameToClubName.put("SunrisersHyderabad", "Sunrisers Hyderabad");
+
+// Retrieve the club name
+       // userName = usernameToClubName.getOrDefault(username, null);
+
 
         /*ArrayList<Player> club = new ArrayList<>(SearchClub.createClub("Kolkata Knight Riders"));
         //System.out.println(SearchClub.createClub("Kolkata Knight Riders"));
@@ -75,19 +93,59 @@ public class Server {
         club = new ArrayList<>(SearchClub.createClub("Sunrisers Hyderabad"));
         clubPlayers.put("Sunrisers Hyderabad", club);
 
+        loadTransferMarket();
+    }
 
+    private static synchronized void saveTransferMarket() {
+        System.out.println("Dhuksek");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSFER_MARKET_FILE))) {
+            for (Player player : transferMarket)
+            {
+                // Construct a string representation of each player (e.g., CSV format)
+                String playerData = player.getName() + "," +
+                        player.getCountry() + "," +
+                        player.getAge() + "," +
+                        player.getHeight() + "," +
+                        player.getClub() + "," +
+                        player.getPosition() + "," +
+                        player.getNumber() + "," +
+                        player.getWeeklySalary();
+
+                // Write the player data followed by a newline
+                writer.write(playerData);
+                writer.newLine();
+            }
+            System.out.println("Players data has been successfully written to the file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static synchronized void loadTransferMarket() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(TRANSFER_MARKET_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Player player = Player.fromText(line);
+                transferMarket.add(player);
+            }
+            System.out.println("Transfer market loaded.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Transfer market file not found. Starting fresh.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
 
 
-
-
     public static void main(String[] args) {
-       // System.out.println(Server.clubPlayers);
-       // System.out.println("Hello");
-       /* ArrayList<Player> players = FileOperations.loadPlayersFromFile(); // load players from input file
-        PlayerList.setPlayers(players); // load players into database from file*/
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutdown hook triggered. Saving transfer market...");
+            saveTransferMarket(); // Ensure transfer market is saved
+        })); /// asdghsdl;hgpsdogih
+
         System.out.println(Server.userCredentials);
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server is running and waiting for clients...");
@@ -101,6 +159,10 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("Entering finally block...");
+            saveTransferMarket(); // Save transfer market when server stops
+            System.out.println("Saved!!!");
         }
     }
 
@@ -183,13 +245,19 @@ public class Server {
         }
 
         private void handleSellPlayer(String club, String playerName, PrintWriter out) {
+            System.out.println("Handling sales " + club);
+            club = usernameToClubName.getOrDefault(club,null);
             ArrayList<Player> players = Server.clubPlayers.get(club);
+            System.out.println("Handling sales" + players);
+            System.out.println(playerName);
             if (players != null) {
                 for (Player player : players) {
                     if (player.getName().equals(playerName)) {
+                        System.out.println("hellobaby");
                         Server.transferMarket.add(player);
                         players.remove(player);
                         out.println("Player " + playerName + " added to transfer market.");
+                        System.out.println(transferMarket);
                         return;
                     }
                 }

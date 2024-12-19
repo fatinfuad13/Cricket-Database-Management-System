@@ -98,5 +98,30 @@ public class Player {
 
     }
 
+    public String toText() {
+        return String.format("%s,%s,%d,%.2f,%s,%s,%d,%d",
+                name, country, age, height, club, position, number, WeeklySalary);
+    }
+
+    // Create a Player object from a text line
+    public static Player fromText(String textLine) {
+        String[] parts = textLine.split(",");
+        if (parts.length != 8) {
+            throw new IllegalArgumentException("Invalid player data format: " + textLine);
+        }
+
+        String name = parts[0];
+        String country = parts[1];
+        int age = Integer.parseInt(parts[2]);
+        double height = Double.parseDouble(parts[3]);
+        String club = parts[4];
+        String position = parts[5];
+        int number = Integer.parseInt(parts[6]);
+        int weeklySalary = Integer.parseInt(parts[7]);
+
+        return new Player(name, country, age, height, club, position, number, weeklySalary);
+    }
+
+
 
 }
