@@ -6,8 +6,8 @@ public class SearchClub {
 
     public static ArrayList<Player> createClub(String clubName) // makes a list where all players are from the club named "clubName"
     {
-        System.out.println(PlayerList.getPlayers());
-        ArrayList<Player> players = new ArrayList<>(PlayerList.getPlayers()); // create a copy instead of assigning to avoid changing players array while searching
+       // System.out.println(PlayerList.getPlayers());
+        ArrayList<Player> players = new ArrayList<>(FileOperations.loadPlayersFromFile()); // create a copy instead of assigning to avoid changing players array while searching
 
         //ArrayList<Player> searched = new ArrayList<>();
         clubName = clubName.toLowerCase().trim(); // MAKE IT PRIVATE?
@@ -29,7 +29,7 @@ public class SearchClub {
 
     public static ArrayList<Player> byMaxSalary(String clubName)
     {
-        ArrayList<Player> players = new ArrayList<>(PlayerList.getPlayers()); // create a copy instead of assigning to avoid changing players array while searching
+       // ArrayList<Player> players = new ArrayList<>(FileOperations.loadPlayersFromFile()); // create a copy instead of assigning to avoid changing players array while searching
         ArrayList<Player> searched = new ArrayList<>();
         ArrayList<Player> club = createClub(clubName);
 

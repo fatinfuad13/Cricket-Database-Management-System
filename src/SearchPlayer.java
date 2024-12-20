@@ -7,7 +7,7 @@ public class SearchPlayer {
 
     public static ArrayList<Player> byName(String name) // searches for a player by name
     {
-        ArrayList<Player> players =  new ArrayList<>(PlayerList.getPlayers()); // receive the playerList
+        ArrayList<Player> players =  new ArrayList<>(FileOperations.loadPlayersFromFile()); // receive the playerList
         ArrayList<Player> searched = new ArrayList<>();
         name = name.toLowerCase().trim();
 
@@ -27,7 +27,7 @@ public class SearchPlayer {
 
     public static ArrayList<Player> byPosition(String position)
     {
-        ArrayList<Player> players =  new ArrayList<>(PlayerList.getPlayers()); // receive the playerList
+        ArrayList<Player> players =  new ArrayList<>(FileOperations.loadPlayersFromFile()); // receive the playerList
         ArrayList<Player> searched = new ArrayList<>();
 
         for(int i=0;i<players.size();i++)
@@ -45,7 +45,7 @@ public class SearchPlayer {
 
     public static ArrayList<Player> byClubCountry(String club,String country)
     {
-        ArrayList<Player> players =  new ArrayList<>(PlayerList.getPlayers()); // receive the playerList
+        ArrayList<Player> players =  new ArrayList<>(FileOperations.loadPlayersFromFile()); // receive the playerList
         ArrayList<Player> searched = new ArrayList<>();
 
         if(club.equals("ANY"))
@@ -86,7 +86,7 @@ public class SearchPlayer {
 
     public static ArrayList<Player> bySalaryRange(int low,int high)
     {
-        ArrayList<Player> players =  new ArrayList<>(PlayerList.getPlayers()); // receive the playerList
+        ArrayList<Player> players =  new ArrayList<>(FileOperations.loadPlayersFromFile()); // receive the playerList
         ArrayList<Player> searched = new ArrayList<>();
 
         if(low > high)
@@ -110,7 +110,7 @@ public class SearchPlayer {
 
     public static HashMap<String,Integer> countryWiseCount()
     {
-        ArrayList<Player> players =  new ArrayList<>(PlayerList.getPlayers()); // receive the playerList
+        ArrayList<Player> players =  new ArrayList<>(FileOperations.loadPlayersFromFile()); // receive the playerList
         HashMap<String,Integer> mp = new HashMap<>();
         // country -> count
         for(int i=0;i<players.size();i++)
