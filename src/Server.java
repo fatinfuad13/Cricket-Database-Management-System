@@ -282,9 +282,13 @@ public class Server {
             String club = usernameToClubName.getOrDefault(userName,null);
             System.out.println(club);
             // Check if the player exists in the transfer market
+            String buyerClub = usernameToClubName.getOrDefault(userName, null);
+            String sellerClub = null;
+            System.out.println("BUYER "+ buyerClub);
             for (Player player : transferMarket) {
                 if (player.getName().equals(playerName)) {
                     playerToBuy = player;
+                    sellerClub = playerToBuy.getClub();
                     break;
                 }
             }
@@ -301,10 +305,22 @@ public class Server {
                     {
                         player.setClub(club); // change club of this player
                         System.out.println(player);
-                       /* System.out.println(player);
-                        System.out.println("Dekho"+players);
-                        FileOperations.savePlayersToFile(players);*/ // save updates immediately
-                       // System.out.println("Dekho"+players);
+
+                        ArrayList<Player> buyerClubPlayers = Server.clubPlayers.getOrDefault(buyerClub, new ArrayList<>());
+                        buyerClubPlayers.add(player); // Add player to buyer's club
+                        Server.clubPlayers.put(buyerClub, buyerClubPlayers);
+
+                        System.out.println("Buyer Club: "+Server.clubPlayers.getOrDefault(buyerClub,null));
+
+                        if (sellerClub != null && Server.clubPlayers.containsKey(sellerClub)) {
+                            ArrayList<Player> sellerClubPlayers = Server.clubPlayers.get(sellerClub);
+                            sellerClubPlayers.remove(player); // Remove player from seller's club
+                            Server.clubPlayers.put(sellerClub, sellerClubPlayers);
+                        }
+
+                        System.out.println("SELLER: "+sellerClub);
+                       // System.out.println("Seller Club:"+ Server.clubPlayers.getOrDefault(sellerClub,null));
+
                         break;
                     }
                 }
@@ -316,8 +332,9 @@ public class Server {
                 out.println("UPDATED_LIST: " + serializedPlayers);  // Send updated list to the client
                 out.flush();
 
-
-
+               PlayerList.setPlayers(players); /////dgfsgadfsg
+                FileOperations.savePlayersToFile(PlayerList.getPlayers()); // update players.txt using the list of server *****
+                /////gsadghjaopsdghsdtgh
             } else {
                 // If the player doesn't exist in the transfer market
                 out.println("FAILURE: Player " + playerName + " not found in the transfer market.");

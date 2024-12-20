@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,7 +170,7 @@ public class Menu {
         searchClubsButton.setOnAction(e -> clubSearchMenu(primaryStage));
         addPlayerButton.setOnAction(e -> addPlayerMenu(primaryStage));
         exitButton.setOnAction(e -> {
-            FileOperations.savePlayersToFile(PlayerList.getPlayers());
+            //FileOperations.savePlayersToFile(PlayerList.getPlayers());
             primaryStage.close();
         });
 
@@ -191,73 +192,63 @@ public class Menu {
     }
 
     public static void viewMyPlayers(Stage primaryStage) {
-       /*try (Socket socket = new Socket("192.168.56.1", 1234);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-           System.out.println("Menu user"+clubName);
-           out.println("GET_PLAYERS " + clubName);
-          // System.out.println("Entered Menu of viewMyPlayers");
-           String response;
-           ArrayList<Player> playerList = new ArrayList<>();
-           while ((response = in.readLine()) != null) {
-               System.out.println("Received response: " + response);  // Debugging line
-               // Assuming each response contains player data
-               // Parse the response into Player objects
-               String[] details = response.split(",");
-               if (details.length == 8) {
-                   String name = details[0].trim();
-                   String country = details[1].trim();
-                   int age = Integer.parseInt(details[2].trim());
-                   double height = Double.parseDouble(details[3].trim());
-                   String club = details[4].trim();
-                   String position = details[5].trim();
-
-                   int number = 0;
-                   if(details[6].trim().isEmpty())
-                   {
-                       number = 0;
-                   }
-                   else
-                   {
-                       number = Integer.parseInt(details[6].trim());
-                   }
-                   int weeklySalary =  Integer.parseInt(details[7].trim());
-
-
-                   Player player = new Player(name, country, age, height, club, position, number, weeklySalary);
-                   System.out.println("hehehafgd"+player);
-                   playerList.add(player);
-               }
-           }*/
         ArrayList<Player> playerList = new ArrayList<>();
-        ArrayList<Player> players = new ArrayList<>(PlayerList.getPlayers());
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).getClub().equals(clubName))
-                playerList.add(players.get(i));
+        try (Socket socket = new Socket("192.168.56.1", 1234);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            System.out.println("Menu user: " + clubName);
+            out.println("GET_PLAYERS " + clubName); // Send request to server
+
+            String response;
+            while ((response = in.readLine()) != null && !response.isEmpty()) {
+                System.out.println("Received response: " + response); // Debugging line
+
+                String[] details = response.split(",");
+                if (details.length == 8) {
+                    try {
+                        // Parse player details
+                        String name = details[0].trim();
+                        String country = details[1].trim();
+                        int age = Integer.parseInt(details[2].trim());
+                        double height = Double.parseDouble(details[3].trim());
+                        String club = details[4].trim();
+                        String position = details[5].trim();
+                        int number = details[6].trim().isEmpty() ? 0 : Integer.parseInt(details[6].trim());
+                        int weeklySalary = Integer.parseInt(details[7].trim());
+
+                        // Create player object and add to the list
+                        Player player = new Player(name, country, age, height, club, position, number, weeklySalary);
+                        playerList.add(player);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing player data: " + response);
+                    }
+                }
+            }
+
+            // Debugging the received player list
+            System.out.println(playerList);
+
+            // Create the TableView using the helper method
+            TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
+
+            // Create a VBox to hold the TableView
+            VBox layout = new VBox(10);
+            layout.getChildren().add(tableView);
+
+            // Create a scene and stage to show the TableView
+            Scene scene = new Scene(layout, 600, 400);  // Set width and height as needed
+            Stage tableStage = new Stage();
+            tableStage.setTitle("My Players");
+            tableStage.setScene(scene);
+            tableStage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error while communicating with the server: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
 
-        System.out.println(playerList);
-        // Create the TableView using the helper method
-        TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
-
-        // Create a VBox to hold the TableView
-        VBox layout = new VBox(10);
-        layout.getChildren().add(tableView);
-
-        // Create a scene and stage to show the TableView
-        Scene scene = new Scene(layout, 600, 400);  // Set width and height as needed
-        Stage tableStage = new Stage();
-        tableStage.setTitle("My Players");
-        tableStage.setScene(scene);
-        tableStage.show();
-
-//    } catch(
-//    IOException e)
-//
-//    {
-//        e.printStackTrace();
-//    }
-}
     public static void sellPlayer(Stage primaryStage)
     {
         TextInputDialog dialog = new TextInputDialog();
@@ -337,7 +328,7 @@ public class Menu {
         });
 
         System.out.println("After buying in client side\n"+PlayerList.getPlayers());
-        FileOperations.savePlayersToFile(PlayerList.getPlayers()); // SAVE AFTER BUYING IMMEDIATELY
+      //  FileOperations.savePlayersToFile(PlayerList.getPlayers()); // SAVE AFTER BUYING IMMEDIATELY
     }
 
     public static ArrayList<Player> deserializePlayerList(String serializedData) {
