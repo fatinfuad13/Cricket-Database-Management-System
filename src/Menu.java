@@ -1,3 +1,4 @@
+import com.sun.media.jfxmedia.events.PlayerEvent;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,8 +26,8 @@ public class Menu {
     //ArrayList<Player> players = PlayerList.getPlayers(); // we assign here instead of making a copy
     private static String clubName = null;
     private static String userName = null;
-    public static void loginMenu(Stage primaryStage)
-    {
+
+    public static void loginMenu(Stage primaryStage) {
 
         VBox layout = new VBox(15);
         layout.setAlignment(javafx.geometry.Pos.CENTER);
@@ -61,7 +62,8 @@ public class Menu {
             String username = usernameField.getText().trim();
             String password = passwordField.getText().trim();
             System.out.println(username);
-            System.out.println(password);;
+            System.out.println(password);
+            ;
 
             boolean success = sendLoginRequest(username, password);
 
@@ -94,12 +96,6 @@ public class Menu {
                     clubName = null; // Optional: Handle unknown usernames
 
 
-
-
-
-
-
-
                 mainMenu(primaryStage); // here
             } else {
                 messageLabel.setText("Invalid Login!");
@@ -119,7 +115,6 @@ public class Menu {
     }
 
 
-
     private static boolean sendLoginRequest(String username, String password) {
         try (Socket socket = new Socket("192.168.56.1", 1234);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -135,10 +130,6 @@ public class Menu {
         }
         return false;
     }
-
-
-
-
 
 
     public static void mainMenu(Stage primaryStage) // here
@@ -161,6 +152,7 @@ public class Menu {
         Button viewPlayersButton = new Button("View My Players");
         Button sellPlayerButton = new Button("Sell Player");
         Button viewMarketButton = new Button("View Transfer Market");
+        Button buyPlayerButton = new Button("Buy Player");
 
         // Add button CSS classes
         searchPlayersButton.getStyleClass().add("button");
@@ -170,6 +162,7 @@ public class Menu {
         viewPlayersButton.getStyleClass().add("button");
         sellPlayerButton.getStyleClass().add("button");
         viewMarketButton.getStyleClass().add("button");
+        buyPlayerButton.getStyleClass().add("button");
 
         // Button actions
         searchPlayersButton.setOnAction(e -> playerSearchMenu(primaryStage));
@@ -184,9 +177,10 @@ public class Menu {
         viewPlayersButton.setOnAction(e -> viewMyPlayers(primaryStage));
         sellPlayerButton.setOnAction(e -> sellPlayer(primaryStage));
         viewMarketButton.setOnAction(e -> viewTransferMarket(primaryStage));
+        buyPlayerButton.setOnAction(e -> buyPlayer(primaryStage));
 
         // Add components to layout
-        layout.getChildren().addAll(titleLabel, searchPlayersButton, searchClubsButton, addPlayerButton,viewPlayersButton,sellPlayerButton,viewMarketButton, exitButton);
+        layout.getChildren().addAll(titleLabel, searchPlayersButton, searchClubsButton, addPlayerButton, viewPlayersButton, sellPlayerButton, viewMarketButton, buyPlayerButton, exitButton);
 
         // Create scene
         Scene scene = new Scene(layout, 1000, 700);
@@ -195,9 +189,9 @@ public class Menu {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-   public static void viewMyPlayers(Stage primaryStage)
-   {
-       try (Socket socket = new Socket("192.168.56.1", 1234);
+
+    public static void viewMyPlayers(Stage primaryStage) {
+       /*try (Socket socket = new Socket("192.168.56.1", 1234);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
            System.out.println("Menu user"+clubName);
@@ -234,27 +228,36 @@ public class Menu {
                    System.out.println("hehehafgd"+player);
                    playerList.add(player);
                }
-           }
-           System.out.println(playerList);
-           // Create the TableView using the helper method
-           TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
+           }*/
+        ArrayList<Player> playerList = new ArrayList<>();
+        ArrayList<Player> players = new ArrayList<>(PlayerList.getPlayers());
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getClub().equals(clubName))
+                playerList.add(players.get(i));
+        }
 
-           // Create a VBox to hold the TableView
-           VBox layout = new VBox(10);
-           layout.getChildren().add(tableView);
+        System.out.println(playerList);
+        // Create the TableView using the helper method
+        TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
 
-           // Create a scene and stage to show the TableView
-           Scene scene = new Scene(layout, 600, 400);  // Set width and height as needed
-           Stage tableStage = new Stage();
-           tableStage.setTitle("My Players");
-           tableStage.setScene(scene);
-           tableStage.show();
+        // Create a VBox to hold the TableView
+        VBox layout = new VBox(10);
+        layout.getChildren().add(tableView);
 
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-   }
+        // Create a scene and stage to show the TableView
+        Scene scene = new Scene(layout, 600, 400);  // Set width and height as needed
+        Stage tableStage = new Stage();
+        tableStage.setTitle("My Players");
+        tableStage.setScene(scene);
+        tableStage.show();
 
+//    } catch(
+//    IOException e)
+//
+//    {
+//        e.printStackTrace();
+//    }
+}
     public static void sellPlayer(Stage primaryStage)
     {
         TextInputDialog dialog = new TextInputDialog();
@@ -274,6 +277,101 @@ public class Menu {
         });
 
     }
+
+    public static void buyPlayer(Stage primaryStage)
+    {
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText("Enter player name to buy:");
+        dialog.showAndWait().ifPresent(playerName -> {
+            try (Socket socket = new Socket("192.168.56.1", 1234);
+                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+                // Send request to server to buy the player
+                out.println("BUY_PLAYER " + userName + " " + playerName);
+
+                // Wait for response from server
+                StringBuilder responseBuilder = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    responseBuilder.append(line);
+                }
+                String response = responseBuilder.toString();
+                System.out.println("Full response: " + response);
+
+
+
+                if (response.startsWith("UPDATED_LIST:")) {
+                    String serializedData = response.substring("UPDATED_LIST:".length());
+                    String[] playerEntries = serializedData.split("\\|END\\|");
+                    ArrayList<Player> deserializedPlayers = new ArrayList<>();
+
+                    for (String playerEntry : playerEntries) {
+                        if (!playerEntry.isBlank()) {
+                            String[] fields = playerEntry.split(",");
+                            Player player = new Player(
+                                    fields[0],        // Name
+                                    fields[1],        // Country
+                                    Integer.parseInt(fields[2]),  // Age
+                                    Double.parseDouble(fields[3]), // Height
+                                    fields[4],        // Club
+                                    fields[5],        // Position
+                                    Integer.parseInt(fields[6]),  // Number
+                                    Integer.parseInt(fields[7]) // Weekly Salary
+                            );
+                            deserializedPlayers.add(player);
+                        }
+                    }
+
+                    // Replace the client-side player list
+                    PlayerList.setPlayers(deserializedPlayers);
+
+                    System.out.println("Updated Player List Received by Client:\n" + deserializedPlayers);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                //showAlert("Error", "Unable to connect to the server.");
+            }
+        });
+
+        System.out.println("After buying in client side\n"+PlayerList.getPlayers());
+        FileOperations.savePlayersToFile(PlayerList.getPlayers()); // SAVE AFTER BUYING IMMEDIATELY
+    }
+
+    public static ArrayList<Player> deserializePlayerList(String serializedData) {
+        ArrayList<Player> players = new ArrayList<>();
+
+        // Split the data by lines
+        String[] lines = serializedData.split("\n");
+       // String[] playerLines = serializedData.split("\n");
+        for (String playerline : lines) {
+            System.out.println("Parsing Line: " + playerline); // Debug each line
+        }
+
+        for (String line : lines) {
+            String[] parts = line.split(",");  // Split by commas
+
+            if (parts.length == 8) {
+                String name = parts[0].trim();
+                String country = parts[1].trim();
+                int age = Integer.parseInt(parts[2].trim());
+                double height = Double.parseDouble(parts[3].trim());
+                String club = parts[4].trim();
+                String position = parts[5].trim();
+                int number = Integer.parseInt(parts[6].trim());
+                int weeklySalary = Integer.parseInt(parts[7].trim());
+
+                // Create a new player
+                Player player = new Player(name, country, age, height, club, position, number, weeklySalary);
+                players.add(player);
+            }
+        }
+
+        return players;
+    }
+
 
     public static void viewTransferMarket(Stage primaryStage)
     {

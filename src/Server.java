@@ -200,7 +200,12 @@ public class Server {
                     handleSellPlayer(parts[1], parts[2], out);
                 } else if (request.equals("VIEW_TRANSFER_MARKET")) {
                     handleViewTransferMarket(out);
+                }else if (request.startsWith("BUY_PLAYER")) {
+                    String[] parts = request.split(" ", 3); // SELL_PLAYER club playerName
+                    handleBuyPlayer(parts[1], parts[2], out);
                 }
+
+
 
                 socket.close();
             } catch (IOException e) {
@@ -271,6 +276,75 @@ public class Server {
                 out.println(player);
             }
         }
+
+        private static void handleBuyPlayer(String userName, String playerName, PrintWriter out) {
+            Player playerToBuy = null;
+            String club = usernameToClubName.getOrDefault(userName,null);
+            System.out.println(club);
+            // Check if the player exists in the transfer market
+            for (Player player : transferMarket) {
+                if (player.getName().equals(playerName)) {
+                    playerToBuy = player;
+                    break;
+                }
+            }
+
+            System.out.println(playerToBuy);
+
+            if (playerToBuy != null) {
+
+                transferMarket.remove(playerToBuy);  // remove from transfer market
+                ArrayList<Player> players = PlayerList.getPlayers(); // get reference of OG list and modify there
+                for(Player player: players)
+                {
+                    if(player == playerToBuy)
+                    {
+                        player.setClub(club); // change club of this player
+                        System.out.println(player);
+                       /* System.out.println(player);
+                        System.out.println("Dekho"+players);
+                        FileOperations.savePlayersToFile(players);*/ // save updates immediately
+                       // System.out.println("Dekho"+players);
+                        break;
+                    }
+                }
+
+                System.out.println("Bought!!");
+                //out.println("SUCCESS: You have successfully bought " + playerName + "!");
+                String serializedPlayers = serializePlayerList(players);
+                System.out.println("Ei je afet\n"+serializedPlayers);
+                out.println("UPDATED_LIST: " + serializedPlayers);  // Send updated list to the client
+                out.flush();
+
+
+
+            } else {
+                // If the player doesn't exist in the transfer market
+                out.println("FAILURE: Player " + playerName + " not found in the transfer market.");
+            }
+        }
+
+        public static String serializePlayerList(ArrayList<Player> players) {
+            StringBuilder serializedData = new StringBuilder();
+
+            for (Player player : players) {
+                System.out.println("Serializing Player: " + player); // Debug each player
+                serializedData.append(player.getName()).append(",")
+                        .append(player.getCountry()).append(",")
+                        .append(player.getAge()).append(",")
+                        .append(player.getHeight()).append(",")
+                        .append(player.getClub()).append(",")
+                        .append(player.getPosition()).append(",")
+                        .append(player.getNumber()).append(",")
+                        .append(player.getWeeklySalary()).append("|END|");
+            }
+            System.out.println("Serialized Data:\n" + serializedData);
+            System.out.println(serializedData.toString());
+            return serializedData.toString();
+        }
+
+
+
     }
 
 

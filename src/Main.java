@@ -21,7 +21,7 @@ public class Main extends Application {
         //System.out.println(PlayerList.getPlayers());
         // FileOperations.savePlayersToFile(players); // save changes back into file before exiting
         primaryStage.setOnCloseRequest(event -> {
-            FileOperations.savePlayersToFile(players);
+            FileOperations.savePlayersToFile(PlayerList.getPlayers());
         });
 
         }

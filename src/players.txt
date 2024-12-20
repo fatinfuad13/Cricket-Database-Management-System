@@ -47,12 +47,9 @@ Ishan Kishan,India,26,1.68,Mumbai Indians,Wicketkeeper,23,20000000
 Lockie Ferguson,New Zealand,33,1.85,Kolkata Knight Riders,Bowler,69,17500000
 Harshal Patel,India,33,1.75,Royal Challengers Bangalore,Bowler,0,15000000
 Mustafizur Rahman,Bangladesh,29,1.8,Delhi Capitals,Bowler,90,14000000
-Litton Das,Bangladesh,30,1.7,Kolkata Knight Riders,Wicketkeeper,16,10000000
+Litton Das,Bangladesh,30,1.7,Delhi Capitals,Wicketkeeper,16,10000000
 Fatin Fuad Alvee,Bangladesh,22,175.0,Mumbai Indians,Allrounder,10,1000000
 Lionel Messi,India,37,170.0,Royal Challengers Bangalore,Batsman,10,1000
 Saif Al Islam,Bangladesh,22,1.8,Delhi Capitals,Batsman,0,20000
-Mashruf Alam,Bangladesh,22,1.7,Kolkata Knight Riders,Allrounder,0,1000
+Mashruf Alam,Bangladesh,22,1.7,Chennai Super Kings,Allrounder,0,1000
 Yeasen Pollob,India,23,1.7,Delhi Capitals,Bowler,0,10
-Adib Ahbab,Bangladesh,23,170.0,Kolkata Knight Riders,Allrounder,10,10000
-Mushfiqur Rahman,Bangladesh,22,1.76,Royal Challengers Bangalore,Allrounder,77,2000
-Babur Raiyan,Bangladesh,21,1.6,Mumbai Indians,Bowler,15,10000
