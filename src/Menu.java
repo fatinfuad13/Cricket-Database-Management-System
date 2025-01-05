@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.w3c.dom.Text;
@@ -186,7 +187,7 @@ public class Menu {
         // Create scene
         Scene scene = new Scene(layout, 1000, 700);
         scene.getStylesheets().add("styles.css"); // Add CSS file
-        primaryStage.setTitle("Main Menu");
+        primaryStage.setTitle(clubName);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -251,30 +252,120 @@ public class Menu {
 
     public static void sellPlayer(Stage primaryStage)
     {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Enter player name to sell:");
-        dialog.showAndWait().ifPresent(playerName -> {
+        Stage sellStage = new Stage();
+        sellStage.setTitle("Sell Player");
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: #2F4F4F;"); // Set background color
+
+        Label header = new Label("Enter the name of the player to sell:");
+        header.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"); // White text for visibility
+
+        TextField playerNameField = new TextField();
+        playerNameField.setPromptText("Player Name");
+
+        Button sellButton = new Button("Sell");
+        sellButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px;");
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-background-color: #cccccc; -fx-text-fill: black; -fx-font-size: 14px;");
+
+        HBox buttonBox = new HBox(10, sellButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        layout.getChildren().addAll(header, playerNameField, buttonBox);
+
+        Scene scene = new Scene(layout, 400, 200);
+        sellStage.setScene(scene);
+
+        sellButton.setOnMouseEntered(event -> sellButton.setStyle("-fx-background-color: #ff6666; -fx-text-fill: white; -fx-font-size: 14px;"));
+        sellButton.setOnMouseExited(event -> sellButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px;"));
+
+// Hover effects for the cancel button
+        cancelButton.setOnMouseEntered(event -> cancelButton.setStyle("-fx-background-color: #e6e6e6; -fx-text-fill: black; -fx-font-size: 14px;"));
+        cancelButton.setOnMouseExited(event -> cancelButton.setStyle("-fx-background-color: #cccccc; -fx-text-fill: black; -fx-font-size: 14px;"));
+
+
+        sellButton.setOnAction(event -> {
+            String playerName = playerNameField.getText();
+            if (playerName.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Player name cannot be empty!", ButtonType.OK);
+                alert.show();
+                return;
+            }
+
             try (Socket socket = new Socket("192.168.56.1", 1234);
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-                out.println("SELL_PLAYER "+userName+" "+ playerName);
+                out.println("SELL_PLAYER " + userName + " " + playerName);
                 String response = in.readLine();
-                // showAlert("Sell Player", response);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, response, ButtonType.OK);
+                alert.show();
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to connect to the server.", ButtonType.OK);
+                alert.show();
             }
+
+            sellStage.close();
         });
 
+        cancelButton.setOnAction(event -> sellStage.close());
+
+        sellStage.show();
     }
 
     public static void buyPlayer(Stage primaryStage)
     {
 
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Enter player name to buy:");
-        dialog.showAndWait().ifPresent(playerName -> {
+        Stage buyStage = new Stage();
+        buyStage.setTitle("Buy Player");
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: #2F4F4F;"); // Set background color
+
+        Label header = new Label("Enter the name of the player to buy:");
+        header.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"); // White text for visibility
+
+        TextField playerNameField = new TextField();
+        playerNameField.setPromptText("Player Name");
+
+        Button buyButton = new Button("Buy");
+        buyButton.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 14px;");
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-background-color: #cccccc; -fx-text-fill: black; -fx-font-size: 14px;");
+
+        HBox buttonBox = new HBox(10, buyButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        layout.getChildren().addAll(header, playerNameField, buttonBox);
+
+        Scene scene = new Scene(layout, 400, 200);
+        buyStage.setScene(scene);
+
+        // Hover effects for the buy button
+        buyButton.setOnMouseEntered(event -> buyButton.setStyle("-fx-background-color: #66cc66; -fx-text-fill: white; -fx-font-size: 14px;"));
+        buyButton.setOnMouseExited(event -> buyButton.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 14px;"));
+
+        // Hover effects for the cancel button
+        cancelButton.setOnMouseEntered(event -> cancelButton.setStyle("-fx-background-color: #e6e6e6; -fx-text-fill: black; -fx-font-size: 14px;"));
+        cancelButton.setOnMouseExited(event -> cancelButton.setStyle("-fx-background-color: #cccccc; -fx-text-fill: black; -fx-font-size: 14px;"));
+
+        buyButton.setOnAction(event -> {
+            String playerName = playerNameField.getText();
+            if (playerName.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Player name cannot be empty!", ButtonType.OK);
+                alert.show();
+                return;
+            }
+
             try (Socket socket = new Socket("192.168.56.1", 1234);
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -289,11 +380,9 @@ public class Menu {
                     responseBuilder.append(line);
                 }
                 String response = responseBuilder.toString();
-                System.out.println("Full response: " + response);
-
-
 
                 if (response.startsWith("UPDATED_LIST:")) {
+                    // Deserialize the updated player list
                     String serializedData = response.substring("UPDATED_LIST:".length());
                     String[] playerEntries = serializedData.split("\\|END\\|");
                     ArrayList<Player> deserializedPlayers = new ArrayList<>();
@@ -309,26 +398,34 @@ public class Menu {
                                     fields[4],        // Club
                                     fields[5],        // Position
                                     Integer.parseInt(fields[6]),  // Number
-                                    Integer.parseInt(fields[7]) // Weekly Salary
+                                    Integer.parseInt(fields[7])   // Weekly Salary
                             );
                             deserializedPlayers.add(player);
                         }
                     }
 
-                    // Replace the client-side player list
+                    // Update the client-side player list
                     PlayerList.setPlayers(deserializedPlayers);
 
-                    System.out.println("Updated Player List Received by Client:\n" + deserializedPlayers);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Player bought successfully and list updated!", ButtonType.OK);
+                    alert.show();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response, ButtonType.OK);
+                    alert.show();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-                //showAlert("Error", "Unable to connect to the server.");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to connect to the server.", ButtonType.OK);
+                alert.show();
             }
+
+            buyStage.close();
         });
 
-        System.out.println("After buying in client side\n"+PlayerList.getPlayers());
-      //  FileOperations.savePlayersToFile(PlayerList.getPlayers()); // SAVE AFTER BUYING IMMEDIATELY
+        cancelButton.setOnAction(event -> buyStage.close());
+
+        buyStage.show();
     }
 
     public static ArrayList<Player> deserializePlayerList(String serializedData) {
@@ -366,28 +463,94 @@ public class Menu {
 
     public static void viewTransferMarket(Stage primaryStage)
     {
+//        try (Socket socket = new Socket("192.168.56.1", 1234);
+//             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+//             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+//
+//            out.println("VIEW_TRANSFER_MARKET");
+//            String response;
+//            StringBuilder market = new StringBuilder();
+//
+//            // Read the transfer market data from the server
+//            while ((response = in.readLine()) != null) {
+//                market.append(response).append("\n");
+//            }
+//
+//            // Show the market data in a dialog box
+//            Alert marketAlert = new Alert(Alert.AlertType.INFORMATION);
+//            marketAlert.setTitle("Transfer Market");
+//            marketAlert.setHeaderText("Available Players in Transfer Market");
+//            marketAlert.setContentText(market.toString());
+//            marketAlert.showAndWait();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            // Show an error dialog if there is an issue with the connection
+//            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+//            errorAlert.setTitle("Error");
+//            errorAlert.setHeaderText("Unable to connect to the server");
+//            errorAlert.setContentText("Please try again later.");
+//            errorAlert.showAndWait();
+//        }
+
+        ArrayList<Player> playerList = new ArrayList<>();
+
         try (Socket socket = new Socket("192.168.56.1", 1234);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
+            // Send request to the server for transfer market data
             out.println("VIEW_TRANSFER_MARKET");
-            String response;
-            StringBuilder market = new StringBuilder();
 
-            // Read the transfer market data from the server
-            while ((response = in.readLine()) != null) {
-                market.append(response).append("\n");
+            String response;
+            while ((response = in.readLine()) != null && !response.isEmpty()) {
+                System.out.println("Received response in view TransferMarket: " + response); // Debugging line
+
+                String[] details = response.split(",");
+                if (details.length == 8) {
+                    try {
+                        // Parse player details
+                        String name = details[0].trim();
+                        String country = details[1].trim();
+                        int age = Integer.parseInt(details[2].trim());
+                        double height = Double.parseDouble(details[3].trim());
+                        String club = details[4].trim();
+                        String position = details[5].trim();
+                        int number = details[6].trim().isEmpty() ? 0 : Integer.parseInt(details[6].trim());
+                        int weeklySalary = Integer.parseInt(details[7].trim());
+
+                        // Create player object and add to the list
+                        Player player = new Player(name, country, age, height, club, position, number, weeklySalary);
+                        playerList.add(player);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing player data: " + response);
+                    }
+                }
             }
 
-            // Show the market data in a dialog box
-            Alert marketAlert = new Alert(Alert.AlertType.INFORMATION);
-            marketAlert.setTitle("Transfer Market");
-            marketAlert.setHeaderText("Available Players in Transfer Market");
-            marketAlert.setContentText(market.toString());
-            marketAlert.showAndWait();
+            // Debugging the received player list
+            System.out.println("almost there: "+playerList);
+
+            // Create the TableView using the helper method
+            TableView<Player> tableView = TableViewHelper.createPlayerTableView(playerList);
+
+            // Create a VBox to hold the TableView
+            VBox layout = new VBox(10);
+            layout.setPadding(new Insets(20));
+            layout.setStyle("-fx-background-color: #2F4F4F;");
+            layout.getChildren().add(tableView);
+
+            // Create a scene and stage to show the TableView
+            Scene scene = new Scene(layout, 800, 600); // Adjust width and height as needed
+            Stage tableStage = new Stage();
+            tableStage.setTitle("Transfer Market");
+            tableStage.setScene(scene);
+            tableStage.show();
 
         } catch (IOException e) {
+            System.err.println("Error while communicating with the server: " + e.getMessage());
             e.printStackTrace();
+
             // Show an error dialog if there is an issue with the connection
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Error");
@@ -395,8 +558,10 @@ public class Menu {
             errorAlert.setContentText("Please try again later.");
             errorAlert.showAndWait();
         }
-
     }
+
+
+
 
     public static void playerSearchMenu(Stage primaryStage) {
         VBox layout = new VBox(20); // Spacing of 20 between elements
@@ -855,6 +1020,7 @@ public class Menu {
                         messageArea.setText("Player of this name is already present in the database.");
                     } else {
                         PlayerList.addPlayer(newPlayer); // Assuming you have an `addPlayer` method in `PlayerList`
+                        FileOperations.savePlayersToFile(PlayerList.getPlayers());
                         messageArea.setText("Player added successfully.");
                     }
 

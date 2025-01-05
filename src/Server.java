@@ -325,10 +325,25 @@ public class Server {
         }
 
         private void handleViewTransferMarket(PrintWriter out) {
-            out.println("Transfer Market:");
-            for (Player player : Server.transferMarket) {
-                out.println(player);
+            if (Server.transferMarket.isEmpty()) {
+                out.println("No players available in the transfer market.");
+            } else {
+                for (Player player : Server.transferMarket) {
+                    // Format player data as a single CSV line
+                    String playerData = String.format("%s,%s,%d,%.2f,%s,%s,%d,%d",
+                            player.getName(),
+                            player.getCountry(),
+                            player.getAge(),
+                            player.getHeight(),
+                            player.getClub(),
+                            player.getPosition(),
+                            player.getNumber(),
+                            player.getWeeklySalary()
+                    );
+                    out.println(playerData); // Send each player's data as a single line
+                }
             }
+            out.flush(); // Ensure the data is sent immediately
         }
 
         private static void handleBuyPlayer(String userName, String playerName, PrintWriter out) {
