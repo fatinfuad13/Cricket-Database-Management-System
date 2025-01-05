@@ -1,2 +1,2 @@
+KL Rahul,India,32,1.8,Mumbai Indians,Wicketkeeper,1,18500000
 Tim David,Australia,28,1.96,Mumbai Indians,Allrounder,21,15000000
-Mashruf Alam,Bangladesh,23,1.72,Gujarat Titans,Allrounder,117,1111

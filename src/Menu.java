@@ -4,15 +4,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.w3c.dom.Text;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.Array;
@@ -139,7 +141,7 @@ public class Menu {
 
         VBox layout = new VBox(20); // Spacing between elements
         layout.setAlignment(Pos.CENTER); // Center align all children
-        layout.getStyleClass().add("vbox-menu"); // Apply CSS styling
+        layout.getStyleClass().add("vbox-MainMenu"); // Apply CSS styling
 
         // Title
         Label titleLabel = new Label("Main Menu");
@@ -183,6 +185,37 @@ public class Menu {
 
         // Add components to layout
         layout.getChildren().addAll(titleLabel, searchPlayersButton, searchClubsButton, addPlayerButton, viewPlayersButton, sellPlayerButton, viewMarketButton, buyPlayerButton, exitButton);
+
+        // Set background image
+        String imagePath = "resources/Image/"+clubName+".jpg"; // Adjust path to match your folder structure
+        try {
+            javafx.scene.image.Image image = new javafx.scene.image.Image(Menu.class.getResourceAsStream(imagePath));
+            if (Menu.class.getResourceAsStream(imagePath) == null) {
+                System.out.println("Image not found at path: " + imagePath);
+            } else {
+                System.out.println("Image successfully loaded from: " + imagePath);
+            }
+
+            if (image.isError()) {
+                System.err.println("Error in loading image: " + image.getException().getMessage());
+            } else {
+                System.out.println("Image loaded successfully.");
+            }
+
+
+
+            BackgroundImage backgroundImage = new BackgroundImage(image,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.CENTER,
+                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true));
+            layout.setBackground(new Background(backgroundImage));
+            System.out.println("shoi");
+        } catch (Exception e) {
+            System.err.println("Error loading background image: " + e.getMessage());
+            layout.setStyle("-fx-background-color: #2F4F4F;"); // Fallback to default background color
+        }
+
 
         // Create scene
         Scene scene = new Scene(layout, 1000, 700);

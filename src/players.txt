@@ -45,13 +45,13 @@ Rassie van der Dussen,South Africa,35,1.87,Rajasthan Royals,Batsman,78,15000000
 Krunal Pandya,India,33,1.8,Lucknow Super Giants,Allrounder,24,16000000
 Ishan Kishan,India,26,1.68,Mumbai Indians,Wicketkeeper,23,20000000
 Lockie Ferguson,New Zealand,33,1.85,Kolkata Knight Riders,Bowler,69,17500000
-Harshal Patel,India,33,1.75,Royal Challengers Bangalore,Bowler,0,15000000
+Harshal Patel,India,33,1.75,Punjab Kings,Bowler,0,15000000
 Mustafizur Rahman,Bangladesh,29,1.8,Sunrisers Hyderabad,Bowler,90,14000000
 Litton Das,Bangladesh,30,1.7,Kolkata Knight Riders,Wicketkeeper,16,10000000
 Lionel Messi,India,36,1.7,Sunrisers Hyderabad,Batsman,10,10
 Adib Ahbab,Bangladesh,22,1.7,Sunrisers Hyderabad,Allrounder,75,1000
-Mashruf Alam,Bangladesh,23,1.72,Gujarat Titans,Allrounder,117,1111
+Mashruf Alam,Bangladesh,23,1.72,Punjab Kings,Allrounder,117,1111
 Fatin Fuad Alvee,India,22,1.76,Lucknow Super Giants,Bowler,101,1234
 Saif Al Islam,Bangladesh,22,1.7,Lucknow Super Giants,Batsman,119,1123
 ABC,India,22,1.5,Sunrisers Hyderabad,Allrounder,11,1111
-New Player,Bangladesh,30,1.9,Gujarat Titans,Allrounder,2,2333
+New Player,Bangladesh,30,1.9,Punjab Kings,Allrounder,2,2333
