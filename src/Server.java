@@ -7,7 +7,7 @@ import java.util.List;
 public class Server {
     private static final int PORT = 1234; // Port to listen on
     private static  HashMap<String, String> userCredentials = new HashMap<>();
-    private static ArrayList<Player> players = FileOperations.loadPlayersFromFile();// load players from input file
+    public static ArrayList<Player> players = FileOperations.loadPlayersFromFile();// load players from input file //// matobbori kortesi
     private static HashMap<String, ArrayList<Player>> clubPlayers = new HashMap<>(); // Club to Players
     private static ArrayList<Player> transferMarket = new ArrayList<>();
     private static HashMap<String, String> usernameToClubName = new HashMap<>();
@@ -95,6 +95,59 @@ public class Server {
 
         loadTransferMarket();
     }
+
+    /*public static void updatePlayerList() {
+
+        //players = FileOperations.loadPlayersFromFile();
+        PlayerList.setPlayers(FileOperations.loadPlayersFromFile());
+
+        ArrayList<Player> club;
+        clubPlayers = new HashMap<>(); //dfshgherherherh
+
+// Kolkata Knight Riders
+        club = new ArrayList<>(SearchClub.createClub("Kolkata Knight Riders"));
+        clubPlayers.put("Kolkata Knight Riders", club);
+
+// Rajasthan Royals
+        club = new ArrayList<>(SearchClub.createClub("Rajasthan Royals"));
+        clubPlayers.put("Rajasthan Royals", club);
+
+// Royal Challengers Bangalore
+        club = new ArrayList<>(SearchClub.createClub("Royal Challengers Bangalore"));
+        clubPlayers.put("Royal Challengers Bangalore", club);
+
+// Mumbai Indians
+        club = new ArrayList<>(SearchClub.createClub("Mumbai Indians"));
+        clubPlayers.put("Mumbai Indians", club);
+
+// Chennai Super Kings
+        club = new ArrayList<>(SearchClub.createClub("Chennai Super Kings"));
+        clubPlayers.put("Chennai Super Kings", club);
+
+// Delhi Capitals
+        club = new ArrayList<>(SearchClub.createClub("Delhi Capitals"));
+        clubPlayers.put("Delhi Capitals", club);
+
+// Lucknow Super Giants
+        club = new ArrayList<>(SearchClub.createClub("Lucknow Super Giants"));
+        clubPlayers.put("Lucknow Super Giants", club);
+
+// Gujarat Titans
+        club = new ArrayList<>(SearchClub.createClub("Gujarat Titans"));
+        clubPlayers.put("Gujarat Titans", club);
+
+// Punjab Kings
+        club = new ArrayList<>(SearchClub.createClub("Punjab Kings"));
+        clubPlayers.put("Punjab Kings", club);
+
+// Sunrisers Hyderabad
+        club = new ArrayList<>(SearchClub.createClub("Sunrisers Hyderabad"));
+        clubPlayers.put("Sunrisers Hyderabad", club);
+
+
+    }*/
+
+
 
     private static synchronized void saveTransferMarket() {
         System.out.println("Dhuksek");
@@ -228,6 +281,7 @@ public class Server {
 
         private void handleGetPlayers(String club, PrintWriter out) {
             ArrayList<Player> players = Server.clubPlayers.get(club);
+            System.out.println("sending from server"+ players);
             if (players != null) {
                 for (Player player : players) {
                     // Format player data as a single CSV line
@@ -301,7 +355,8 @@ public class Server {
                 ArrayList<Player> players = PlayerList.getPlayers(); // get reference of OG list and modify there
                 for(Player player: players)
                 {
-                    if(player == playerToBuy)
+
+                    if(player.getName().equals(playerToBuy.getName()))
                     {
                         player.setClub(club); // change club of this player
                         System.out.println(player);
@@ -315,6 +370,16 @@ public class Server {
                         if (sellerClub != null && Server.clubPlayers.containsKey(sellerClub)) {
                             ArrayList<Player> sellerClubPlayers = Server.clubPlayers.get(sellerClub);
                             sellerClubPlayers.remove(player); // Remove player from seller's club
+
+                            for(int i=0;i<sellerClubPlayers.size();i++)
+                            {
+                                if(sellerClubPlayers.get(i).getName().equals(player.getName()))
+                                    sellerClubPlayers.remove(sellerClubPlayers.get(i));
+                            }
+
+
+
+                            System.out.println("Seller players: dasfg"+sellerClubPlayers);
                             Server.clubPlayers.put(sellerClub, sellerClubPlayers);
                         }
 
@@ -323,6 +388,11 @@ public class Server {
 
                         break;
                     }
+                    else
+                    {
+                        System.out.println("oopss");
+                    }
+
                 }
 
                 System.out.println("Bought!!");

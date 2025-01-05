@@ -16,6 +16,7 @@ public class PlayerList {
 
     public static boolean containsPlayer(String name)
     {
+
         name = name.toLowerCase().trim();
         for(int i=0;i<players.size();i++)
         {
